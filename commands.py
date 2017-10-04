@@ -177,3 +177,75 @@ class vimtab(Command):
 
     def tab(self, tabnum):
         return self._tab_directory_content()
+
+
+
+class tmux_rtab(Command):
+    """:tmux_rtab <directory>
+    open ranger in a new tmux tab in the specified directory,
+    or the current directory if none is specified.
+    do nothing if we're not using tmux
+    """
+
+    def execute(self):
+        # If not using iTerm, return
+        tmux = os.environ['TMUX']
+        if tmux == "":
+            self.fm.notify("Error: Not using tmux!")
+            return
+
+        target_dir = None
+        # If we've selected a directory:
+        if self.arg(1):
+            selected = self.rest(1)
+            if not os.path.isdir(selected):
+                self.fm.notify(selected + " is not a directory!")
+                return
+            target_dir = selected
+
+        # Otherwise, use the current directory
+        else:
+            target_dir = self.fm.thisdir.path
+
+        os.system(
+            "tmux -2 new-window 'ranger {0}'".format(target_dir)
+        )
+
+    def tab(self, tabnum):
+        return self._tab_directory_content()
+
+
+class tmux_tab(Command):
+    """:tmux_tab <directory>
+    open a new tmux tab in the specified directory,
+    or the current directory if none is specified.
+    do nothing if we're not using tmux
+    """
+
+    def execute(self):
+        # If not using iTerm, return
+        tmux = os.environ['TMUX']
+        if tmux == "":
+            self.fm.notify("Error: Not using tmux!")
+            return
+
+        target_dir = None
+        # If we've selected a directory:
+        if self.arg(1):
+            selected = self.rest(1)
+            if not os.path.isdir(selected):
+                self.fm.notify(selected + " is not a directory!")
+                return
+            target_dir = selected
+
+        # Otherwise, use the current directory
+        else:
+            target_dir = self.fm.thisdir.path
+
+        os.system(
+            "tmux -2 new-window -c {0}".format(target_dir)
+        )
+
+    def tab(self, tabnum):
+        return self._tab_directory_content()
+
